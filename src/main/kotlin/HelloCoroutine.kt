@@ -13,20 +13,8 @@ fun main() = runBlocking<Unit> {
         println("After doSomething call inside launch block")
     }
     println("Just after job launched: $job , ${Thread.currentThread().name}")
-
-    val deferred = async {
-        delay(100)
-        println("Inside async block: $coroutineContext , ${Thread.currentThread().name}")
-        launch { doSomething("async") }
-        println("After doSomething call inside async block")
-    }
-    println("Just after deferred job launched: $deferred , ${Thread.currentThread().name}")
-
     job.join()
     println("Job is joined: $job , ${Thread.currentThread().name}")
-
-    deferred.join()
-    println("Deferred job is joined: $deferred , ${Thread.currentThread().name}")
 
     callSuspendFunSynchronously()
     callSuspendFunAsynchronously(this)
