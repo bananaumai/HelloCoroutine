@@ -29,7 +29,7 @@ fun main() {
         println("Job is joined: $job , ${Thread.currentThread().name}")
 
         callSuspendFunSynchronously()
-        callSuspendFunAsynchronously(this)
+        callSuspendFunAsynchronously()
     }
     println("After second runBlocking block, ${Thread.currentThread().name}")
 
@@ -83,19 +83,12 @@ suspend fun callSuspendFunSynchronously() {
     println("Synchronous: one() + two() = ${one + two}")
 }
 
-suspend fun callSuspendFunAsynchronously(scope: CoroutineScope) {
-    if (scope != coroutineContext) {
-        println("Asynchronous: scope: $scope")
-        println("Asynchronous: coroutineContext $coroutineContext")
-    }
-
-    scope.launch {
-        println("Asynchronous: before call suspending functions")
-        val one = async { one() }
-        val two = async { two() }
-        println("Asynchronous: after call suspending functions")
-        println("Asynchronous: one() + two() = ${one.await() + two.await()}")
-    }
+suspend fun callSuspendFunAsynchronously() = coroutineScope<Unit> {
+    println("Asynchronous: before call suspending functions: $coroutineContext, ${Thread.currentThread().name}")
+    val one = async { one() }
+    val two = async { two() }
+    println("Asynchronous: after call suspending functions")
+    println("Asynchronous: one() + two() = ${one.await() + two.await()}")
 }
 
 suspend fun one(): Int {
