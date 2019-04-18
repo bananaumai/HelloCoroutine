@@ -16,9 +16,11 @@ fun main() {
     println("Before second runBlocking block, ${Thread.currentThread().name}")
     runBlocking(CoroutineName("Second runBlocking") + Dispatchers.Default) {
         println("Beginning of runBlocking block: $coroutineContext , ${Thread.currentThread().name}")
+        println("${coroutineContext[CoroutineName]}: ${coroutineContext[Job]}")
         val job =launch {
             delay(100)
             println("Inside launch block: $coroutineContext , ${Thread.currentThread().name}")
+            println("${coroutineContext[CoroutineName]}: ${coroutineContext[Job]}}")
             launch { doSomething("launch") }
             println("After doSomething call inside launch block")
         }
