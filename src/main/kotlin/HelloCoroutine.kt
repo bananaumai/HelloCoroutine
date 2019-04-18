@@ -4,20 +4,32 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
 
-fun main() = runBlocking<Unit> {
-    println("Beginning of runBlocking block: $coroutineContext , ${Thread.currentThread().name}")
-    val job =launch {
+fun main() {
+    println("Before first runBlocking block, ${Thread.currentThread().name}")
+    runBlocking(CoroutineName("First runBlocking")) {
         delay(100)
-        println("Inside launch block: $coroutineContext , ${Thread.currentThread().name}")
-        launch { doSomething("launch") }
-        println("After doSomething call inside launch block")
+        println("Inside coroutine scope: $coroutineContext , ${Thread.currentThread().name}")
     }
-    println("Just after job launched: $job , ${Thread.currentThread().name}")
-    job.join()
-    println("Job is joined: $job , ${Thread.currentThread().name}")
+    println("After first runBlocking block, ${Thread.currentThread().name}")
 
-    callSuspendFunSynchronously()
-    callSuspendFunAsynchronously(this)
+    println("Before second runBlocking block, ${Thread.currentThread().name}")
+    runBlocking(CoroutineName("Second runBlocking") + Dispatchers.Default) {
+        println("Beginning of runBlocking block: $coroutineContext , ${Thread.currentThread().name}")
+        val job =launch {
+            delay(100)
+            println("Inside launch block: $coroutineContext , ${Thread.currentThread().name}")
+            launch { doSomething("launch") }
+            println("After doSomething call inside launch block")
+        }
+        println("Just after job launched: $job , ${Thread.currentThread().name}")
+        job.join()
+        println("Job is joined: $job , ${Thread.currentThread().name}")
+
+        callSuspendFunSynchronously()
+        callSuspendFunAsynchronously(this)
+    }
+    println("After second runBlocking block, ${Thread.currentThread().name}")
+
 }
 
 suspend fun doSomething(caller: String) {
